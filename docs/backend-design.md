@@ -6,7 +6,8 @@ This document describes the **design and architecture** of the backend system fo
 
 ## 1. Architecture Overview
 The backend is implemented as a **RESTful Web API** using **ASP.NET Core 8**.  
-It provides CRUD operations for managing `Contact` entities stored in a local **SQLite database** through **Entity Framework Core (EF Core)**.
+It provides CRUD operations for managing `Contact` entities stored in a local **SQLite database** through **Entity Framework Core (EF Core)**.  
+The design also supports **Groups**, **Tags**, and **Notes**, reflecting a richer contact management system.
 
 ```
 [ React (MUI Frontend) ]
@@ -29,25 +30,29 @@ It provides CRUD operations for managing `Contact` entities stored in a local **
 - **Contact**
   - Represents a contact record in the system
   - Fields: `Id`, `Name`, `Email`, `Phone`, `Note`
+- **Group**
+  - Represents logical contact groups (Family, Work, etc.)
+  - N:M relationship with Contact through `ContactGroup`
+- **Tag**
+  - Flexible labels attached to contacts (e.g., VIP, Prospect)
+  - N:M relationship with Contact through `ContactTag`
+- **Note**
+  - Notes linked to a Contact (1:N relationship)
+  - Supports audit trail or AI-generated entries
 
 ### 2.2 Data Layer
 - **AppDbContext**
-  - EF Core DbContext managing entity sets (`DbSet<Contact>`)
+  - EF Core DbContext managing entity sets (`DbSet<Contact>`, `DbSet<Group>`, `DbSet<Tag>`, etc.)
   - Responsible for database connection and queries
 
 - **SeedData**
-  - Initializes the database with a few sample records if empty
-  - Supports testing and development without manual data entry
+  - Initializes the database with sample data for testing and development
 
 ### 2.3 Controllers
 - **ContactsController**
-  - Exposes RESTful endpoints under `/api/contacts`
-  - Implements CRUD operations:
-    - `GET /api/contacts`
-    - `GET /api/contacts/{id}`
-    - `POST /api/contacts`
-    - `PUT /api/contacts/{id}`
-    - `DELETE /api/contacts/{id}`
+  - Exposes CRUD endpoints for `Contact`
+- **GroupsController**, **TagsController**, **NotesController** (future)
+  - Provide CRUD for related entities
 
 ### 2.4 Configuration
 - **Program.cs**
@@ -66,6 +71,10 @@ It provides CRUD operations for managing `Contact` entities stored in a local **
 4. **Entity** is mapped to JSON and returned to the client
 5. **Client UI** displays results in MUI DataGrid
 
+Additional flows:
+- Groups/Tags fetched via join tables
+- Notes appended automatically or manually linked to a Contact
+
 ---
 
 ## 4. Design Decisions
@@ -77,6 +86,9 @@ It provides CRUD operations for managing `Contact` entities stored in a local **
 - **Entity Framework Core** for ORM:
   - Provides strongly-typed queries
   - Simplifies migrations and schema management
+
+- **N:M relationships** explicitly modeled with join tables:
+  - Ensures database normalization and efficient lookups
 
 - **CORS enabled**:
   - Explicitly allows `http://localhost:3000`
@@ -91,10 +103,10 @@ It provides CRUD operations for managing `Contact` entities stored in a local **
 ## 5. Extensibility
 
 The current design supports extension with minimal disruption:
-- **New fields** in `Contact` can be added via EF Core migration
-- **Additional entities** (e.g., `Company`, `Tag`) can be introduced by adding models and DbSets
-- **AI services** can be layered as separate endpoints (`/api/ai/...`) without touching existing CRUD
-- **Authentication/Authorization** can be added with JWT middleware
+- Adding **new fields** or **entities** via EF Core migration
+- Expanding Group/Tag logic without breaking existing CRUD
+- Adding **AI services** (summarization, sentiment analysis) as new controllers
+- Introducing **Authentication/Authorization** with JWT middleware
 
 ---
 
