@@ -1,0 +1,20 @@
+{
+  "folders": [
+    { "path": "backend" },
+    { "path": "frontend" }
+  ],
+  "settings": {
+    "files.exclude": { "**/bin": true, "**/obj": true, "**/node_modules": true },
+    "editor.formatOnSave": true
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-dotnettools.csdevkit",
+      "ms-dotnettools.vscode-dotnet-runtime",
+      "ms-azuretools.vscode-docker",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "humao.rest-client"
+    ]
+  }
+}

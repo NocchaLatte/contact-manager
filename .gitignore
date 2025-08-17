@@ -10,7 +10,7 @@
 **/.cache/
 **/build/
 **/dist/
-
+**/.env
 # OS/editor
 .DS_Store
 Thumbs.db

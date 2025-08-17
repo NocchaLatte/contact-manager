@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Run All (API + UI)",
+      "configurations": ["Backend (Kestrel)", "Frontend (CRA)"]
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Backend (Kestrel)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "backend:watch",
+      "program": "${workspaceFolder:backend}/bin/Debug/net8.0/backend.dll",
+      "cwd": "${workspaceFolder:backend}",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Frontend (CRA)",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "preLaunchTask": "frontend:start",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder:frontend}/src"
+    }
+  ]
+}
