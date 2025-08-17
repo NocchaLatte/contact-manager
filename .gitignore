@@ -1,0 +1,19 @@
+# dotnet
+**/bin/
+**/obj/
+*.user
+*.suo
+*.sln.docstates
+
+# node
+**/node_modules/
+**/.cache/
+**/build/
+**/dist/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
