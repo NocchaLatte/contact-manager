@@ -77,7 +77,7 @@ public class ContactsControllerTests : IClassFixture<CustomWebAppFactory>
         await CreateAsync(NewContact(email));
         var res = await _client.PostAsJsonAsync("/api/contacts", NewContact(email));
         res.StatusCode.Should().Be(HttpStatusCode.Conflict);
-        (await res.Content.ReadAsStringAsync()).Should().Contain("email");
+        (await res.Content.ReadAsStringAsync()).Should().Contain("Email");
     }
 
     // ---------- UPDATE ----------
@@ -111,7 +111,7 @@ public class ContactsControllerTests : IClassFixture<CustomWebAppFactory>
         };
         var put = await _client.PutAsJsonAsync($"/api/contacts/{created.Id}", wrongId);
         put.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await put.Content.ReadAsStringAsync()).Should().Contain("ID mismatch");
+        (await put.Content.ReadAsStringAsync()).Should().Contain("Id mismatch");
     }
 
     [Fact]

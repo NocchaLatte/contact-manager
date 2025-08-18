@@ -8,12 +8,13 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Produces("application/json")]
+[Produces("application/json", "application/problem+json")]
 public class ContactsController(AppDbContext db) : ControllerBase
 {
     /// <summary>Get all contacts.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<Contact>>> GetAll(CancellationToken ct)
         => Ok(await db.Contacts.AsNoTracking().ToListAsync(ct));
 
@@ -21,6 +22,7 @@ public class ContactsController(AppDbContext db) : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Contact>> Get(int id, CancellationToken ct)
         => await db.Contacts.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id, ct) is { } c
             ? Ok(c)
@@ -32,16 +34,17 @@ public class ContactsController(AppDbContext db) : ControllerBase
     [ProducesResponseType(typeof(Contact), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Contact>> Create([FromBody] ContactCreateDto dto, CancellationToken ct)
     {
         // [ApiController] will automatically validate the model and return 400 if invalid.
         // Map DTO to entity
         var c = new Contact
         {
-            Name  = dto.Name,
+            Name = dto.Name,
             Email = dto.Email,
             Phone = dto.Phone ?? string.Empty,
-            Note  = dto.Note
+            Note = dto.Note
         };
 
         db.Contacts.Add(c);
@@ -56,6 +59,7 @@ public class ContactsController(AppDbContext db) : ControllerBase
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Update(int id, [FromBody] ContactUpdateDto dto, CancellationToken ct)
     {
         if (id != dto.Id)
@@ -65,10 +69,10 @@ public class ContactsController(AppDbContext db) : ControllerBase
         if (entity is null) return NotFound();
 
         // only update fields that are required or can be changed
-        entity.Name  = dto.Name;
+        entity.Name = dto.Name;
         entity.Email = dto.Email;
         entity.Phone = dto.Phone ?? string.Empty;
-        entity.Note  = dto.Note;
+        entity.Note = dto.Note;
 
         await db.SaveChangesAsync(ct); // UNIQUE violation → global handler returns 409
         return NoContent();
@@ -78,6 +82,7 @@ public class ContactsController(AppDbContext db) : ControllerBase
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {
         var entity = await db.Contacts.FindAsync([id], ct);
