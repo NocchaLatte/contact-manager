@@ -65,5 +65,21 @@ This project was created as a short-term demo (1–2 days) to gain hands-on expe
 
 ---
 
+## 🔐 Environment variables
+Add a `.env` file in the project root (and `frontend/.env` for the React app if needed). Do NOT commit real secrets. Use `.env.example` as a template.
+
+Example variables (see `.env.example`):
+- REACT_APP_API_BASE_URL: base URL the frontend uses to call the API (dev default: http://localhost:5137)
+- ConnectionStrings__DefaultConnection: EF Core connection string (dev default: Data Source=contacts.db)
+- ASPNETCORE_ENVIRONMENT: Development | Production
+- ASPNETCORE_URLS: URLs the backend listens on (dev default: http://localhost:5137)
+- DEMO_API_KEY: optional demo key to protect write endpoints in public demos
+
+To run locally:
+- Backend: copy `.env.example` -> `.env` and run `dotnet run` in `backend/`
+- Frontend: copy `.env.example` -> `frontend/.env` and run `npm start` in `frontend/`
+
+---
+
 ## 📜 License
 MIT
