@@ -17,3 +17,22 @@ Thumbs.db
 .vscode/*
 !.vscode/launch.json
 !.vscode/tasks.json
+
+# local database
+/backend/contacts.db
+*.db
+*.sqlite
+*.sqlite3
+
+# react env locals
+.env.local
+.env.*.local
+
+# IDE/workspace
+.vs/
+.idea/
+
+# logs & test outputs
+*.log
+TestResults/
+coverage/
